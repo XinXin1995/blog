@@ -1,0 +1,56 @@
+@font-face {
+  font-family: 'blog';  /* project id 2243818 */
+  src: url('//at.alicdn.com/t/font_2243818_6t8i319ou44.eot');
+  src: url('//at.alicdn.com/t/font_2243818_6t8i319ou44.eot?#iefix') format('embedded-opentype'),
+  url('//at.alicdn.com/t/font_2243818_6t8i319ou44.woff2') format('woff2'),
+  url('//at.alicdn.com/t/font_2243818_6t8i319ou44.woff') format('woff'),
+  url('//at.alicdn.com/t/font_2243818_6t8i319ou44.ttf') format('truetype'),
+  url('//at.alicdn.com/t/font_2243818_6t8i319ou44.svg#blog') format('svg');
+}
+[class*="blog-"],
+[class^="blog-"] {
+  font-family: "blog" !important;
+  font-style: normal;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  display: inline-block;
+  -webkit-font-smoothing: antialiased;
+}
+
+.blog-menu:before {
+  content: "\e60d";
+}
+
+.blog-setting:before {
+  content: "\e9d3";
+}
+
+.blog-home:before {
+  content: "\e619";
+}
+
+.blog-time:before {
+  content: "\e639";
+}
+
+.blog-blog:before {
+  content: "\e681";
+}
+
+.blog-like:before {
+  content: "\e64d";
+}
+
+.blog-tag:before {
+  content: "\e633";
+}
+
+.blog-category:before {
+  content: "\e610";
+}
+
+.blog-view:before {
+  content: "\e651";
+}
