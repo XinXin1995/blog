@@ -2,11 +2,11 @@
     <div class="article">
 
         <div class="left">
-            <span  class="search-btn" @click="searchVisible = !searchVisible">
+            <span class="search-btn" @click="searchVisible = !searchVisible">
                 <i class="el-icon-search"></i>
             </span>
             <search-dialog :visible="searchVisible" :tags="tags" :categories="categories" @search="handleSearch"/>
-            <vue-scroll :ops="ops" @handle-scroll="handleLoadMore">
+            <vue-scroll ref="scroll" :ops="ops" @handle-scroll="handleLoadMore">
                 <div class="wrap">
                     <template v-for="item in articles">
                         <article-item :item="item" :key="item.id" @like="handleLike(item)"/>
@@ -22,8 +22,12 @@
                 <span class="blog-category"></span>文章分类
             </div>
             <div class="content">
-                <div class="category-item" :class="{active: pagination.category === 0}" @click="handleQueryByCategory(0)">全部</div>
-                <div class="category-item" :class="{active: pagination.category === item.id}" v-for="item in categories" :key="item.id" @click="handleQueryByCategory(item.id)">{{item.name}}</div>
+                <div class="category-item" :class="{active: pagination.category === 0}"
+                     @click="handleQueryByCategory(0)">全部
+                </div>
+                <div class="category-item" :class="{active: pagination.category === item.id}" v-for="item in categories"
+                     :key="item.id" @click="handleQueryByCategory(item.id)">{{item.name}}
+                </div>
             </div>
             <div class="title tag-title">
                 <span class="blog-tag"></span>文章标签
@@ -41,10 +45,13 @@
 </template>
 
 <script>
-import { GetArticleUnion, GetArticleList } from '@/api/article'
+import { GetArticleUnion } from '@/api/article'
+import { GetAllTags } from '@/api/tags'
+import { GetAllCategories } from '@/api/category'
 import { scroll } from '@/config'
 import ArticleItem from '@/components/articleItem'
 import SearchDialog from '@/components/searchDialog'
+
 export default {
   components: {
     ArticleItem,
@@ -75,22 +82,27 @@ export default {
         if (res.code === 0) {
           this.articles = res.data.list || []
           this.pagination.total = res.data.total
-          this.tags = res.data.tags || []
-          this.categories = res.data.categories || []
         }
       })
     },
-    initArticleList () {
-      GetArticleList(this.pagination).then(res => {
+    initTags () {
+      GetAllTags().then(res => {
         if (res.code === 0) {
-          this.articles = res.data || []
+          this.tags = res.data || []
+        }
+      })
+    },
+    initCategories () {
+      GetAllCategories().then(res => {
+        if (res.code === 0) {
+          this.categories = res.data || []
         }
       })
     },
     initLoadMore () {
-      GetArticleList(this.pagination).then(res => {
+      GetArticleUnion(this.pagination).then(res => {
         if (res.code === 0) {
-          let data = res.data || []
+          let data = res.data.list || []
           if (data.length === 0) {
             this.loadCompleted = true
           }
@@ -101,7 +113,6 @@ export default {
     handleLike (item) {
       item.likes = item.likes + 1
     },
-
     handleToDetail (item) {
       this.$router.push({ name: 'article.detail', params: { id: item.id } })
     },
@@ -114,12 +125,16 @@ export default {
         this.pagination.tags.push(item.id)
       }
       this.pagination.tags.sort()
-      this.initArticleList()
+      this.init()
+      this.$refs.scroll.scrollTo({ y: 0, animation: 0 })
+      this.loadCompleted = false
     },
     handleQueryByCategory (category) {
       this.pagination.pageNo = 1
       this.pagination.category = category
-      this.initArticleList()
+      this.$refs.scroll.scrollTo({ y: 0, animation: 0 })
+      this.init()
+      this.loadCompleted = false
     },
     handleLoadMore ({ process }) {
       // console.log(e)
@@ -133,11 +148,13 @@ export default {
       this.pagination.category = param.category
       this.pagination.keyword = param.keyword
       this.searchVisible = false
-      this.initArticleList()
+      this.init()
     }
   },
   mounted () {
     this.init()
+    this.initTags()
+    this.initCategories()
   }
 }
 </script>
@@ -159,7 +176,8 @@ export default {
                 font-size: 16px;
                 color: #7bb360;
                 position: relative;
-                span{
+
+                span {
                     margin-right: $-margin;
                 }
 
@@ -173,6 +191,7 @@ export default {
                     position: absolute;
                     bottom: 14px;
                 }
+
                 &.tag-title {
                     color: #f56c6c;
 
@@ -185,10 +204,12 @@ export default {
             .content {
                 padding: $-padding;
             }
-            .tag{
-                &.active{
+
+            .tag {
+                &.active {
                     position: relative;
-                    &:after{
+
+                    &:after {
                         content: '';
                         display: block;
                         width: 20px;
@@ -208,7 +229,8 @@ export default {
             overflow: hidden;
         }
     }
-    .search-btn{
+
+    .search-btn {
         position: fixed;
         width: 60px;
         height: 60px;
@@ -221,6 +243,7 @@ export default {
         line-height: 60px;
         display: none;
     }
+
     .category-item {
         display: inline-block;
         line-height: 30px;
@@ -234,7 +257,7 @@ export default {
             text-decoration: underline;
         }
 
-        &.active{
+        &.active {
             color: $-active-color;
         }
     }
@@ -249,7 +272,7 @@ export default {
         }
     }
 
-    .load-complete-text{
+    .load-complete-text {
         font-size: 16px;
         color: #999;
         text-align: center;
@@ -257,14 +280,15 @@ export default {
     }
 
     @media (max-width: 780px) {
-        .article{
+        .article {
             margin-top: 60px;
             display: block;
-            .right{
+
+            .right {
                 display: none;
             }
         }
-        .search-btn{
+        .search-btn {
             display: block;
         }
     }

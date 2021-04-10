@@ -1,22 +1,13 @@
 package model
 
 import (
-	"time"
+	"blog/global"
 )
 
 type SysUser struct {
-	Id        string    `json:"id" xorm:"pk"`
-	Username  string    `json:"username"`
-	Password  string    `json:"-"`
-	Nickname  string    `json:"nickname"`
-	Avatar    string    `json:"avatar"`
-	CreatedAt time.Time `json:"createdAt" xorm:"created"`
-	UpdatedAt time.Time `json:"updatedAt" xorm:"updated"`
-}
-
-type SysUserRole struct {
-	Id        int64  `json:"id"`
-	UserId    string `json:"userId"`
-	RoleId    string `json:"roleId"`
-	IsDefault bool   `json:"isDefault"`
+	global.GVA_MODEL
+	Username string `json:"username"`
+	Password string `json:"-"`
+	Avatar   string `json:"avatar"`
+	Role     int    `json:"role" gorm:"default:3"` // 1：管理员 3：普通人员
 }

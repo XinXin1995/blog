@@ -5,13 +5,13 @@ export function GetAllCategories () {
 }
 
 export function AddCategory ({ name }) {
-  return request.post('/api/manage/category/add', { name })
+  return request.post('/api/manager/category/create', { name })
 }
 
 export function UpdateCategory ({ id, name }) {
-  return request.post('/api/manage/category/update', { id, name })
+  return request.put('/api/manager/category/update', { id, name })
 }
 
 export function DelCategory ({ id }) {
-  return request.get('/api/manage/category/del', { params: { id } })
+  return request.delete('/api/manager/category/delete', { params: { id } })
 }

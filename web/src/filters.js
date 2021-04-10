@@ -4,10 +4,7 @@ export default (function (Vue) {
   const filters = {
     formatDateTime: (value) => {
       if (value) {
-        if (value.toString().length > 10) {
-          value = value / 1000
-        }
-        let d = new Date(value * 1000)
+        let d = new Date(value)
         let year = d.getFullYear()
         let month = d.getMonth() + 1
         month = month < 10 ? '0' + month : month

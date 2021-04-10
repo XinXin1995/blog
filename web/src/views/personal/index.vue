@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { GetArticleList } from '@/api/article'
+import { GetArticleUnion } from '@/api/article'
 import ArticleItem from '@/components/articleItem'
 export default {
   data () {
@@ -32,9 +32,9 @@ export default {
   },
   methods: {
     init () {
-      GetArticleList({ pageNo: 1, pageSize: 5 }).then(res => {
+      GetArticleUnion({ pageNo: 1, pageSize: 5 }).then(res => {
         if (res.code === 0) {
-          this.articles = res.data || []
+          this.articles = res.data.list || []
         }
       })
     }

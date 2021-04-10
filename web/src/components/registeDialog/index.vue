@@ -11,7 +11,8 @@
                 <el-input type="password" v-model="param.repeatPwd"></el-input>
             </el-form-item>
             <el-form-item label="头像" prop="avatar">
-                <upload :file-type="1" @success="handleUploadSuccess" @remove="handleUploadRemove"/>
+                <upload :file-type="1" :file="param.avatar" @success="handleUploadSuccess"
+                        @remove="handleUploadRemove"/>
             </el-form-item>
         </el-form>
         <div slot="footer">
@@ -97,8 +98,9 @@ export default {
         username: '',
         password: '',
         repeatPwd: '',
-        avatar: 'https://blogstore-1301375948.cos.ap-nanjing.myqcloud.com/user/1607062845_avatar.jpg'
-      }
+        avatar: ''
+      },
+      baseURL: 'https://store.wuchangxin.club/user/1607062845_avatar.jpg'
     }
   },
   methods: {
@@ -116,8 +118,9 @@ export default {
     handleClose () {
       this.$emit('update:visible')
     },
-    handleUploadSuccess (url) {
-      this.param.avatar = url
+    handleUploadSuccess (data) {
+      console.log(data)
+      this.param.avatar = data.url
     },
     handleUploadRemove () {
       this.param.avatar = ''
@@ -125,14 +128,13 @@ export default {
     handleConfirm () {
       this.$refs.register.validate(valid => {
         if (valid) {
-          console.log(this.param)
+          this.param.avatar = this.param.avatar || this.baseURL
           AddUser(this.param).then(res => {
             if (res.code === 0) {
               this.login(this.param)
               this.handleClose()
             }
           })
-          console.log('valid')
         }
       })
     }

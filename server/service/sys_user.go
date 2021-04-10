@@ -4,105 +4,46 @@ import (
 	"blog/global"
 	"blog/model"
 	"blog/model/request"
-	"blog/model/response"
 	"blog/utils"
 	"errors"
-	"fmt"
+	"go.uber.org/zap"
+	"gorm.io/gorm"
 )
 
 //用户列表
 func GetUserList(p request.PageInfo) (err error, list []model.SysUser, total int64) {
 	limit := p.PageSize
-	offset := p.PageSize * (p.Page - 1)
+	offset := p.PageSize * (p.PageNo - 1)
 	db := global.GVA_DB
-	err = db.Where("username like ?", "%"+p.Keyword+"%").Limit(limit, offset).Find(&list)
-	total, err = db.Where("username like ?", "%"+p.Keyword+"%").Count(&model.SysUser{})
+	err = db.Where("username like ?", "%"+p.Keyword+"%").Limit(limit).Offset(offset).Find(&list).Count(&total).Error
 	return
 }
 
 //用户注册（添加用户）
-func Register(u model.SysUser, roles []model.SysUserRole) (err error) {
-	var user model.SysUser
-	has, err := global.GVA_DB.Where("username = ?", u.Username).Get(&user)
-	if has {
-		return errors.New("用户名已注册")
-	} else {
-		u.Password = utils.MD5V([]byte(u.Password))
-		session := global.GVA_DB.NewSession()
-		defer session.Close()
-		err = session.Begin()
-		_, err = session.Insert(&u)
-		if err != nil {
-			session.Rollback()
-			return
-		}
-		if len(roles) > 0 {
-			for _, role := range roles {
-				_, err = session.Insert(&role)
-				if err != nil {
-					session.Rollback()
-					return
-				}
-			}
-		}
-		err = session.Commit()
-		if err != nil {
-			return
-		} else {
-
-		}
+func Register(u *model.SysUser) (err error) {
+	if !errors.Is(global.GVA_DB.Where("username = ?", u.Username).First(&model.SysUser{}).Error, gorm.ErrRecordNotFound) {
+		global.GVA_LOG.Error("用户名已存在", zap.Any("err", err))
+		return errors.New("用户名已存在")
 	}
-	return err
-}
+	u.Password = utils.MD5V([]byte(u.Password))
 
-// 用户绑定角色
-func UserBindRole(userId string, roles []model.SysUserRole) (err error) {
-	session := global.GVA_DB.NewSession()
-
-	defer session.Close()
-
-	err = session.Begin()
-
-	if _, err = session.Exec("Delete From sys_user_role WHERE user_id = ?", userId); err != nil {
-		session.Rollback()
-		return
-	}
-
-	if len(roles) > 0 {
-		for _, role := range roles {
-			_, err = session.Insert(&role)
-			if err != nil {
-				session.Rollback()
-				return
-			}
-		}
-	}
-	err = session.Commit()
-	return
+	return global.GVA_DB.Create(&u).Error
 }
 
 // 登录
-func Login(u model.SysUser) (error, *response.SysUserDetailResponse) {
+func Login(u model.SysUser) (error, model.SysUser) {
 	u.Password = utils.MD5V([]byte(u.Password))
-	has, err := global.GVA_DB.Get(&u)
-	if !has {
-		err = errors.New("用户不存在")
+	err := global.GVA_DB.Where("username = ? AND password = ?", u.Username, u.Password).First(&u).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return errors.New("用户名或密码不正确"), model.SysUser{}
 	}
-	err, userReturn := UserDetail(u)
-	return err, &userReturn
+	return err, u
 }
 
 // 获取用户信息详情
-func UserDetail(u model.SysUser) (err error, userReturn response.SysUserDetailResponse) {
-	has, err := global.GVA_DB.Get(&u)
-	if !has {
-		err = errors.New("未查询到该用户信息")
+func UserDetail(id uint) (err error, userReturn model.SysUser) {
+	if errors.Is(global.GVA_DB.Where("id = ?", id).First(&userReturn).Error, gorm.ErrRecordNotFound) {
 		return
 	}
-	rolesSql := "SELECT r.id, r.name, ur.is_default FROM sys_user_role ur LEFT JOIN sys_role r ON ur.role_id = r.id WHERE ur.user_id = '%s'"
-	var roles []response.SysUserRole
-	err = global.GVA_DB.SQL(fmt.Sprintf(rolesSql, u.Id)).Find(&roles)
-	userReturn.GetFomSysUser(&u)
-	userReturn.Roles = roles
 	return
 }

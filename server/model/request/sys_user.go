@@ -1,12 +1,10 @@
 package request
 
 type RegisterStruct struct {
-	Id       string             `json:"string"`
 	Username string             `json:"username" binding:"required"`
 	Password string             `json:"password" binding:"required"`
 	Nickname string             `json:"nickname" binding:"required"`
-	Avatar   string             `json:"avatar" binding:"required"`
-	Roles    []RegisterUserRole `json:"roles"`
+	Avatar   string             `json:"avatar"`
 }
 
 type RegisterUserRole struct {
@@ -19,7 +17,7 @@ type UserBindRole struct {
 	Roles  []RegisterUserRole `json:"roles" binding:"required"`
 }
 
-type ValidStruct struct {
+type Login struct {
 	Username  string `json:"username"`
 	Password  string `json:"password"`
 	Captcha   string `json:"captcha"`

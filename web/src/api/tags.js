@@ -5,13 +5,13 @@ export function GetAllTags () {
 }
 
 export function DelTag ({ id }) {
-  return request.get('/api/manage/tag/del', { params: { id } })
+  return request.delete('/api/manager/tag/delete', { params: { id } })
 }
 
 export function AddTag ({ name, color }) {
-  return request.post('/api/manage/tag/add', { name, color })
+  return request.post('/api/manager/tag/create', { name, color })
 }
 
 export function UpdateTag ({ id, name, color }) {
-  return request.post('/api/manage/tag/update', { id, name, color })
+  return request.put('/api/manager/tag/update', { id, name, color })
 }

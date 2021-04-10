@@ -4,7 +4,7 @@
             <header v-cloak>
                     <h1>
                     <span class="category">
-                        【{{param.categoryName}}】
+                        【{{param.category && param.category.name}}】
                     </span>
                     {{param.title}}</h1>
                     <div class="tag" v-for="tag in param.tags" :key="tag.id"
@@ -83,7 +83,6 @@ export default {
       })
     },
     handleAnchor (e) {
-      console.log(e.target.tagName)
       if (e.target.tagName === 'A') {
         let target = e.target.href
         let id = target.split('#')[1]

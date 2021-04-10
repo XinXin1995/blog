@@ -24,6 +24,7 @@
 
 <script>
 import { BASE_URL } from '@/config'
+
 export default {
   props: {
     fileType: {
@@ -38,7 +39,6 @@ export default {
         return this.file
       },
       set () {}
-
     }
   },
   data () {
@@ -48,18 +48,18 @@ export default {
         data: {
           type: this.fileType
         }
-      }
+      },
+      fileParam: {}
     }
   },
   methods: {
     handleUploadSuccess (res) {
       if (res.code === 0) {
-        this.url = res.data
+        this.fileParam = res.data
         this.$emit('success', res.data)
       }
     },
     handleRemove () {
-      this.url = ''
       this.$emit('remove')
     }
   }

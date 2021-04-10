@@ -2,17 +2,15 @@ package v1
 
 import (
 	"blog/global"
-	"blog/global/response"
 	"blog/middleware"
 	"blog/model"
 	"blog/model/request"
 	resp "blog/model/response"
 	"blog/service"
-	"blog/utils"
 	"fmt"
-	"github.com/dchest/captcha"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"go.uber.org/zap"
 	"time"
 )
 
@@ -21,111 +19,69 @@ func UserList(c *gin.Context) {
 	_ = c.ShouldBindJSON(&pageInfo)
 	err, list, total := service.GetUserList(pageInfo)
 	if err != nil {
-		response.FailWidthMessage(fmt.Sprintf("查询失败：%v", err.Error()), c)
+		resp.FailWidthMessage(fmt.Sprintf("查询失败：%v", err.Error()), c)
 	} else {
 		result := &resp.PageResult{
 			List:     list,
 			Total:    total,
-			Page:     pageInfo.Page,
+			Page:     pageInfo.PageNo,
 			PageSize: pageInfo.PageSize,
 		}
-		response.OkDetailed(result, "查询成功", c)
+		resp.OkDetailed(result, "查询成功", c)
 	}
 }
 
 func Register(c *gin.Context) {
 	var R request.RegisterStruct
 	_ = c.ShouldBindJSON(&R)
-	var roles = make([]model.SysUserRole, len(R.Roles))
-	Id := utils.CreateUuid()
-	if len(R.Roles) > 0 {
-		for index, role := range R.Roles {
-			roles[index].UserId = Id
-			roles[index].RoleId = role.Id
-			roles[index].IsDefault = role.IsDefault
-		}
-	}
-	user := &model.SysUser{
-		Id:       Id,
+	user := model.SysUser{
 		Username: R.Username,
 		Password: R.Password,
-		Nickname: R.Nickname,
 		Avatar:   R.Avatar,
 	}
-	err := service.Register(*user, roles)
+	err := service.Register(&user)
 	if err != nil {
-		response.FailWidthDetailed(response.ERROR, nil, fmt.Sprintf("%v", err.Error()), c)
+		resp.FailWidthDetailed(nil, fmt.Sprintf("%v", err.Error()), c)
 	} else {
-		response.OkDetailed(nil, "注册成功", c)
+		resp.OkDetailed(nil, "注册成功", c)
 	}
 }
 
 func UserDetail(c *gin.Context) {
-	Id := c.Query("id")
-	if len(Id) == 0 {
-		response.FailWidthMessage("请传入角色uuid", c)
-		return
-	}
-	U := model.SysUser{
-		Id: Id,
-	}
-	err, userReturn := service.UserDetail(U)
+	claims, _ := c.Get("claims")
+	waitUse := claims.(*model.CustomClaims)
+	err, u := service.UserDetail(waitUse.Id)
 	if err != nil {
-		response.FailWidthMessage(fmt.Sprintf("查询失败：%v", err.Error()), c)
+		resp.FailWidthMessage(fmt.Sprintf("查询失败：%v", err.Error()), c)
 	} else {
-		response.OkDetailed(userReturn, "操作成功", c)
+		resp.OkDetailed(u, "操作成功", c)
 	}
 }
 
-func Valid(c *gin.Context) {
-	var V request.ValidStruct
-	_ = c.ShouldBindJSON(&V)
-	if captcha.VerifyString(V.CaptchaId, V.Captcha) {
-		U := model.SysUser{Username: V.Username, Password: V.Password}
-		if err, user := service.Login(U); err != nil {
-			response.FailWidthMessage(fmt.Sprintf("用户名密码错误或v%", err.Error()), c)
+func Login(c *gin.Context) {
+	var L request.Login
+	_ = c.ShouldBindJSON(&L)
+	if store.Verify(L.CaptchaId, L.Captcha, true) {
+		u := model.SysUser{Username: L.Username, Password: L.Password}
+		if err, user := service.Login(u); err != nil {
+			global.GVA_LOG.Error("登陆失败! 用户名不存在或者密码错误", zap.Any("err", err))
+			resp.FailWidthMessage("用户名不存在或者密码错误", c)
 		} else {
-			tokenNext(c, user)
+			tokenNext(c, &user)
 		}
 	} else {
-		response.FailWidthMessage("验证码错误", c)
+		resp.FailWidthMessage("验证码错误", c)
 	}
 }
 
-func UserBindRole(c *gin.Context) {
-	var param request.UserBindRole
-	err := c.ShouldBindJSON(&param)
-	if err != nil {
-		response.FailWidthMessage(fmt.Sprintf("绑定角色失败：%v", err.Error()), c)
-		return
-	}
-	userId := param.UserId
-	var roles = make([]model.SysUserRole, len(param.Roles))
-	if len(param.Roles) > 0 {
-		for index, role := range param.Roles {
-			roles[index].UserId = userId
-			roles[index].RoleId = role.Id
-			roles[index].IsDefault = role.IsDefault
-		}
-	}
-	err = service.UserBindRole(userId, roles)
-	if err != nil {
-		response.FailWidthMessage(fmt.Sprintf("绑定角色失败：%v", err.Error()), c)
-	} else {
-		response.OkWithNil(c)
-	}
-
-}
-
-func tokenNext(c *gin.Context, user *resp.SysUserDetailResponse) {
+func tokenNext(c *gin.Context, user *model.SysUser) {
 	j := &middleware.JWT{
 		SigningKey: []byte(global.GVA_CONFIG.JWT.SigningKey), // 唯一签名
 	}
-	clams := request.CustomClaims{
-		Id:       user.Id,
+	clams := model.CustomClaims{
+		Id:       user.ID,
 		UserName: user.Username,
-		Nickname: user.Nickname,
-		Roles:    user.Roles,
+		Role:     user.Role,
 		StandardClaims: jwt.StandardClaims{
 			NotBefore: int64(time.Now().Unix() - 1000),       // 签名生效时间
 			ExpiresAt: int64(time.Now().Unix() + 60*60*24*7), // 过期时间 一周
@@ -134,10 +90,10 @@ func tokenNext(c *gin.Context, user *resp.SysUserDetailResponse) {
 	}
 	token, err := j.CreateToken(clams)
 	if err != nil {
-		response.FailWidthMessage("获取token失败", c)
+		resp.FailWidthMessage("获取token失败", c)
 	} else {
-		response.OkWithData(resp.LoginResponse{
-			User:      *user,
+		resp.OkWithData(resp.LoginResponse{
+			User:      user,
 			Token:     token,
 			ExpiresAt: clams.StandardClaims.ExpiresAt * 1000,
 		}, c)

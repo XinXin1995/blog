@@ -10,17 +10,17 @@
                     <el-form :inline="true">
                         <el-form-item label="标题">
                             <el-input style="width: 200px;" v-model="pagination.keyword" placeholder="关键字查询"
-                                      @change="initList"></el-input>
+                                      @change="init"></el-input>
                         </el-form-item>
                         <el-form-item label="分类">
-                            <el-select v-model="pagination.category" @change="initList">
+                            <el-select v-model="pagination.category" @change="init">
                                 <el-option label="全部" :value="0"></el-option>
                                 <el-option v-for="item in categories" :key="item.id" :label="item.name"
                                            :value="item.id"></el-option>
                             </el-select>
                         </el-form-item>
                         <el-form-item label="标签">
-                            <el-select multiple v-model="pagination.tags" style="width: 300px" @change="initList">
+                            <el-select multiple v-model="pagination.tags" style="width: 300px" @change="init">
                                 <el-option v-for="item in tags" :key="item.id" :label="item.name"
                                            :value="item.id"></el-option>
                             </el-select>
@@ -37,7 +37,11 @@
                             </el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" width="150px" label="分类" prop="categoryName"></el-table-column>
+                    <el-table-column align="center" width="150px" label="分类" >
+                        <template slot-scope="scope">
+                            {{scope.row.categoryName || '--'}}
+                        </template>
+                    </el-table-column>
                     <el-table-column label="标签">
                         <template slot-scope="scope">
                             <div class="tag" v-for="tag in scope.row.tags" :key="tag.id"
@@ -53,8 +57,8 @@
                 </el-table>
                 <div class="pagination">
                     <el-pagination
-                            @size-change="initList"
-                            @current-change="initList"
+                            @size-change="init"
+                            @current-change="init"
                             :current-page.sync="pagination.pageNo"
                             :page-sizes="[10, 20, 30, 40]"
                             :page-size.sync="pagination.pageSize"
@@ -70,7 +74,9 @@
 
 <script>
 import { scroll } from '@/config'
-import { GetArticleUnion, GetArticleList, DelArticle } from '@/api/article'
+import { GetArticleUnion, DelArticle } from '@/api/article'
+import { GetAllTags } from '@/api/tags'
+import { GetAllCategories } from '@/api/category'
 
 export default {
   data () {
@@ -94,15 +100,6 @@ export default {
         if (res.code === 0) {
           this.articles = res.data.list || []
           this.pagination.total = res.data.total
-          this.tags = res.data.tags || []
-          this.categories = res.data.categories || []
-        }
-      })
-    },
-    initList () {
-      GetArticleList(this.pagination).then(res => {
-        if (res.code === 0) {
-          this.articles = res.data || []
         }
       })
     },
@@ -112,13 +109,19 @@ export default {
       }).then(res => {
         if (res.code === 0) {
           this.$message.success('删除成功')
-          this.initList()
+          this.init()
         }
       })
     }
   },
   created () {
     this.init()
+    GetAllTags().then(res => {
+      this.tags = res.data || []
+    })
+    GetAllCategories().then(res => {
+      this.categories = res.data || []
+    })
   }
 }
 </script>

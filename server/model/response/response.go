@@ -33,12 +33,12 @@ func OkWithData(data interface{}, c *gin.Context) {
 	Result(SUCCESS, data, "操作成功", c)
 }
 
-func FailWidthDetailed(code int, data interface{}, message string, c *gin.Context) {
-	Result(code, data, message, c)
+func FailWidthDetailed( data interface{}, message string, c *gin.Context) {
+	Result(ERROR, data, message, c)
 }
 
 func FailWidthMessage(m string, c *gin.Context) {
-	Result(ERROR, nil, m, c)
+	Result(ERROR, gin.H{}, m, c)
 }
 
 func FailWidthError(msg string, err error, c *gin.Context) {

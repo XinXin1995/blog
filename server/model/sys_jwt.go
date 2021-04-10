@@ -1,14 +1,12 @@
-package request
+package model
 
 import (
-	"blog/model/response"
 	"github.com/dgrijalva/jwt-go"
 )
 
 type CustomClaims struct {
+	Id       uint
 	UserName string
-	Id       string
-	Nickname string
-	Roles    []response.SysUserRole
+	Role     int
 	jwt.StandardClaims
 }

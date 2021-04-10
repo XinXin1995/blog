@@ -18,9 +18,9 @@ const user = {
     }
   },
   actions: {
-    login ({ commit }, { password, username }) {
+    login ({ commit }, param) {
       return new Promise((resolve) => {
-        Login({ password, username }).then(res => {
+        Login(param).then(res => {
           if (res.code === 0) {
             res.data.token && setToken(res.data.token)
             commit(types.SET_USER_INFO, res.data.user)

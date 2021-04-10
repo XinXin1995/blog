@@ -62,7 +62,7 @@ export default {
         }).then(res => {
           if (res.code === 0) {
             this.init()
-            this.$message.success('添加成功')
+            this.$message.success('修改成功')
           }
         })
       })

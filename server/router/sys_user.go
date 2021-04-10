@@ -8,10 +8,7 @@ import (
 func InitUserRouter(Router *gin.RouterGroup) {
 	UserRouter := Router.Group("user")
 	{
-		UserRouter.POST("add", v1.Register)
-		UserRouter.GET("detail", v1.UserDetail)
-		UserRouter.GET("list", v1.UserList)
-		UserRouter.POST("valid", v1.Valid)
-		UserRouter.POST("bindRole", v1.UserBindRole)
+		UserRouter.POST("register", v1.Register)
+		UserRouter.POST("login", v1.Login)
 	}
 }

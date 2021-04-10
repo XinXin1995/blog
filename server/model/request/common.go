@@ -1,7 +1,7 @@
 package request
 
 type PageInfo struct {
-	Page     int    `json:"page"`
+	PageNo     int    `json:"pageNo"`
 	PageSize int    `json:"pageSize"`
 	Keyword  string `json:"keyword"`
 }
