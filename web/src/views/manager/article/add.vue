@@ -95,7 +95,6 @@ export default {
     },
     handleUploadSuccess (url) {
       this.param.thumb = url
-      console.log(url)
     },
     handleRemove () {
       this.param.thumb = ''
