@@ -21,4 +21,5 @@ type ArticleList struct {
 	PageInfo
 	Tags     []int `json:"tags"`
 	Category int   `json:"category"`
+	OrderType int	`json:"orderType"`
 }

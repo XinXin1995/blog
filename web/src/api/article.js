@@ -25,12 +25,13 @@ export function GetArticle ({ id }) {
   return request.get('/api/article/detail', { params: { id } })
 }
 
-export function GetArticleUnion ({ pageNo = 0, pageSize = 10, keyword = '', category = 0, tags = [] }) {
+export function GetArticleUnion ({ pageNo = 0, pageSize = 10, keyword = '', category = 0, tags = [], orderType = 1 }) {
   return request.post('/api/article/list', {
     pageNo,
     pageSize,
     keyword,
     category,
+    orderType,
     tags
   })
 }

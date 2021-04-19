@@ -7,8 +7,8 @@
         <menu-dialog :visible.sync="menuVisible" :menu="menu"/>
         <aside>
             <logo></logo>
-            <div class="avatar" v-if="user && user.avatar">
-                <el-avatar :src="user.avatar" :size="120"></el-avatar>
+            <div class="avatar">
+                <el-avatar src="https://store.wuchangxin.club/default/my-avatar.jpg" :size="120"></el-avatar>
             </div>
             <ul class="menu-list">
                 <template v-for="(item, index) in menu">
@@ -139,7 +139,7 @@ export default {
 <style lang="scss" scoped>
     .layout {
         height: 100vh;
-        background-color: $-light;
+        background-color: $-bgc;
         overflow: hidden;
         display: flex;
         nav {

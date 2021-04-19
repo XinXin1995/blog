@@ -3,6 +3,9 @@ import request from '@/utils/request'
 export function Login ({ username, password, captcha, captchaId }) {
   return request.post('/api/user/login', { username, password, captcha, captchaId })
 }
+export function Visit ({ username, password }) {
+  return request.post('/api/user/visit', { username, password })
+}
 
 export function GetUser () {
   return request.get('/api/manager/user/detail')

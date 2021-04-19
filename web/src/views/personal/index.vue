@@ -32,7 +32,7 @@ export default {
   },
   methods: {
     init () {
-      GetArticleUnion({ pageNo: 1, pageSize: 5 }).then(res => {
+      GetArticleUnion({ pageNo: 1, pageSize: 5, orderType: 2 }).then(res => {
         if (res.code === 0) {
           this.articles = res.data.list || []
         }

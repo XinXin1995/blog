@@ -1,26 +1,17 @@
 package response
 
-import "time"
+import (
+	"blog/global"
+	"blog/model"
+)
 
 type RespArticle struct {
-	ID        uint                    `json:"id"`
-	Title     string                  `json:"title"`
-	Category  RespArticleCategory `json:"category"`
-	Content   string                  `json:"content"`
-	Thumb     string                  `json:"thumb"`
-	View      int64                   `json:"view"`
-	Likes     int64                   `json:"likes"`
-	Tags      []RespArticleTag    `json:"tags"`
-	CreatedAt time.Time               `json:"createdAt"`
-	UpdatedAt time.Time               `json:"updatedAt"`
-}
-
-type RespArticleCategory struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
-}
-type RespArticleTag struct {
-	ID    uint   `json:"id"`
-	Name  string `json:"name"`
-	Color string `json:"color"`
+	global.GVA_MODEL
+	Title      string             `json:"title"`
+	CategoryId uint               `json:"categoryId"`
+	Category   model.BlogCategory `json:"category"`
+	Thumb      string             `json:"thumb"`
+	View       int64              `json:"view"`
+	Likes      int64              `json:"likes"`
+	Tags       []model.BlogTag    `json:"tags"`
 }

@@ -11,6 +11,7 @@ type BlogArticle struct {
 	Thumb      string       `json:"thumb"`
 	View       int64        `json:"view"`
 	Likes      int64        `json:"likes"`
+	TagIdGroup   string 	`json:"-"`
 	Tags       []BlogTag    `json:"tags" gorm:"many2many:article_tags"`
 }
 

@@ -26,45 +26,30 @@ func GetArticle(id int) (article model.BlogArticle, err error) {
 	return article, nil
 }
 
-func GetArticleList(param *request.ArticleList) (err error, count int64, list []model.Articles) {
-	limit := (param.PageNo - 1) * param.PageSize
-	offset := param.PageSize
-	var strBuilder strings.Builder
-	strBuilder.WriteString("SELECT * FROM (")
-	strBuilder.WriteString("SELECT ")
-	strBuilder.WriteString("a.*, ")
-	strBuilder.WriteString("c.name as category_name, ")
-	strBuilder.WriteString("group_concat(r.blog_tag_id) as group_tag_id ")
-	strBuilder.WriteString("FROM ")
-	strBuilder.WriteString("blog_articles a ")
-	strBuilder.WriteString("LEFT JOIN blog_categories c on a.category_id = c.id ")
-	strBuilder.WriteString("LEFT JOIN article_tags r ON r.blog_article_id = a.id ")
-	strBuilder.WriteString("GROUP BY a.id ")
-	strBuilder.WriteString(" ) a ")
-	strBuilder.WriteString("WHERE a.deleted_at IS NULL ")
+func GetArticleList(param *request.ArticleList) (err error, count int64, list []model.BlogArticle) {
+	offset := (param.PageNo - 1) * param.PageSize
+	limit := param.PageSize
+	db := global.GVA_DB
 	if len(param.Keyword) > 0 {
-		strBuilder.WriteString(fmt.Sprintf("AND a.title LIKE '%%%s%%'", param.Keyword))
+		db = db.Where("title LIKE ?", "%"+param.Keyword+"%")
 	}
 	if param.Category > 0 {
-		strBuilder.WriteString(fmt.Sprintf("AND a.category_id = %d ", param.Category))
+		db = db.Where("category_id = ?", param.Category)
 	}
 	if len(param.Tags) > 0 {
-		for _, tagId := range param.Tags {
-			strBuilder.WriteString(fmt.Sprintf(" AND group_tag_id LIKE '%%%d%%' ", tagId))
+		for _, v := range param.Tags {
+			s := strconv.Itoa(v)
+			db = db.Where("tag_id_group LIKE ?", "%"+s+"%")
 		}
 	}
-	strBuilder.WriteString(fmt.Sprintf("LIMIT %d, %d", limit, offset))
-	strSql := strBuilder.String()
-	rows, err := global.GVA_DB.Raw(strSql).Rows()
-	for rows != nil && rows.Next() {
-		_ = global.GVA_DB.ScanRows(rows, &list)
+	if param.OrderType == 1 {
+		db = db.Order("created_at desc")
+	} else if param.OrderType == 2 {
+		db = db.Order("likes desc")
 	}
-	list = formatArticleList(list)
-	if err != nil {
-		return
-	}
-	count = articleCount(param)
-	return nil, count, list
+	err = db.Model(&model.BlogArticle{}).Count(&count).Error
+	err = db.Select("id", "title", "thumb", "likes", "view", "category_id", "created_at", "updated_at").Limit(limit).Offset(offset).Preload("Category").Preload("Tags").Order("created_at desc").Find(&list).Error
+	return err, count, list
 }
 func articleCount(param *request.ArticleList) int64 {
 	var strBuilder strings.Builder
@@ -148,6 +133,7 @@ func formatArticleList(articles []model.Articles) []model.Articles {
 
 func UpdateArticle(param *request.UpdateArticleParam) error {
 	var tags []model.BlogTag
+	tagIdGroup := fmt.Sprintf("%d", param.Tags)
 	db := global.GVA_DB
 	db.Where("id in ?", param.Tags).Find(&tags)
 	article := model.BlogArticle{}
@@ -155,6 +141,7 @@ func UpdateArticle(param *request.UpdateArticleParam) error {
 	article.Title = param.Title
 	article.Content = param.Content
 	article.CategoryId = param.Category
+	article.TagIdGroup = tagIdGroup
 	return db.Transaction(func(tx *gorm.DB) error {
 		err := tx.Updates(&article).Error
 		if err != nil {

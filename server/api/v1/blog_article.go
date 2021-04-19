@@ -6,6 +6,7 @@ import (
 	"blog/model/request"
 	"blog/model/response"
 	"blog/service"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"strconv"
@@ -17,11 +18,13 @@ func AddArticle(c *gin.Context) {
 		response.FailWidthMessage(err.Error(), c)
 		return
 	}
+	tagIdGroup := fmt.Sprintf("%d", articleParam.Tags)
 	article := &model.BlogArticle{
 		Title:      articleParam.Title,
 		Content:    articleParam.Content,
 		CategoryId: articleParam.Category,
 		Thumb:      articleParam.Thumb,
+		TagIdGroup: tagIdGroup,
 	}
 	err := service.AddArticle(article, articleParam.Tags)
 	if err != nil {

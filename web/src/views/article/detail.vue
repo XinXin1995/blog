@@ -1,6 +1,7 @@
 <template>
     <div class="article-detail" v-loading="loading">
         <div class="left">
+            <vue-scroll :ops="ops" ref="articleScroll">
             <header v-cloak>
                     <h1>
                     <span class="category">
@@ -27,13 +28,13 @@
                     </div>
             </header>
             <div class="article">
-                <vue-scroll :ops="ops" ref="articleScroll">
                     <div class="article-content">
                         <div v-html="param.content">
                         </div>
                     </div>
-                </vue-scroll>
             </div>
+            <comment :article-id="param.id"></comment>
+            </vue-scroll>
         </div>
         <div class="right">
             <vue-scroll :ops="ops">
@@ -48,6 +49,7 @@ import { GetArticle, like } from '@/api/article'
 import { translate } from '@/utils'
 import { scroll } from '@/config'
 import tocbot from 'tocbot'
+import Comment from './comment'
 
 export default {
   data () {
@@ -100,6 +102,9 @@ export default {
   },
   mounted () {
     this.init()
+  },
+  components: {
+    Comment
   }
 }
 </script>
@@ -115,8 +120,6 @@ export default {
             flex: 1;
             height: 100%;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
             border-right: 1px solid $-bgc;
 
             header {
@@ -345,16 +348,17 @@ export default {
             padding-top: 60px;
             .left{
                 header{
-                    height: 110px;
+                    height: 80px;
                     h1{
                         font-size: 18px;
                     }
                     .tag{
+                        display: none;
                         padding: 5px;
                         font-size: 12px;
                     }
                     .label{
-                        font-size: 14px;
+                        display: none;
                     }
                     .date{
                         float: none;

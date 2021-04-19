@@ -10,5 +10,6 @@ func InitUserRouter(Router *gin.RouterGroup) {
 	{
 		UserRouter.POST("register", v1.Register)
 		UserRouter.POST("login", v1.Login)
+		UserRouter.POST("visit", v1.LoginForVisitor)
 	}
 }

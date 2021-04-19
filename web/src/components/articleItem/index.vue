@@ -2,7 +2,7 @@
     <div class="article-item" @click="$router.push({name: 'article.detail', params: {id: item.id}})">
         <div class="detail">
             <h1>
-                <span class="article-category">[{{item.categoryName}}]</span>
+                <span class="article-category">[{{item.category && item.category.name}}]</span>
                 {{item.title}}
             </h1>
             <div class="article-tag">

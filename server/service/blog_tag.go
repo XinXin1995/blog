@@ -5,6 +5,7 @@ import (
 	"blog/model"
 	"errors"
 	"gorm.io/gorm"
+	"strconv"
 )
 
 func GetTags() ([]model.BlogTag, error) {
@@ -28,6 +29,11 @@ func DeleteTag(id int) error {
 			return errors.New("删除与文章关联关系失败")
 		}
 		err = tx.Unscoped().Model(&model.BlogTag{}).Delete("id = ?", id).Error
+		if err != nil {
+			return errors.New("删除标签失败")
+		}
+		str := "UPDATE blog_articles a INNER JOIN (select id, SUBSTRING_INDEX(tag_id_group, '"+strconv.Itoa(id)+"', 1) as tag_id_group from blog_articles WHERE tag_id_group LIKE '%"+strconv.Itoa(id)+"%'\n) r ON a.id = r.id SET a.tag_id_group = r.tag_id_group"
+		err = tx.Exec(str).Error
 		if err != nil {
 			return errors.New("删除标签失败")
 		}

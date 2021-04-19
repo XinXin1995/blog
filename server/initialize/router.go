@@ -18,6 +18,7 @@ func Routers() *gin.Engine {
 		router.InitCategoryRouter(ApiGroup)
 		router.InitManagerRouter(ApiGroup)
 		router.InitFile(ApiGroup)
+		router.InitBlogCommentRouter(ApiGroup)
 	}
 	//router.InitBase(ApiGroup)
 	//router.InitPage(ApiGroup)

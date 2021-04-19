@@ -65,6 +65,9 @@ export default {
         categoryId: 1,
         tags: [],
         content: ''
+      },
+      uploadResult: {
+
       }
     }
   },
@@ -93,8 +96,9 @@ export default {
         })
       }
     },
-    handleUploadSuccess (url) {
-      this.param.thumb = url
+    handleUploadSuccess (data) {
+      this.uploadResult = data
+      this.param.thumb = data.url
     },
     handleRemove () {
       this.param.thumb = ''
@@ -127,9 +131,10 @@ export default {
         data: formData
       }).then(res => {
         if (res.data.code === 0) {
+          debugger
           let content = this.param.content
           let oStr = `(${pos})`
-          let nStr = `(${res.data.data})`
+          let nStr = `(${res.data.data.url})`
           let index = content.indexOf(oStr)
           let str = content.replace(oStr, '')
           let insertStr = (soure, start, newStr) => {

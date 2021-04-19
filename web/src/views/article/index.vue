@@ -1,7 +1,6 @@
 <template>
     <div class="article">
-
-        <div class="left">
+        <div class="left" v-show="!loading" v-loading="pullLoading">
             <span class="search-btn" @click="searchVisible = !searchVisible">
                 <i class="el-icon-search"></i>
             </span>
@@ -17,18 +16,50 @@
                 </div>
             </vue-scroll>
         </div>
+        <div class="skeleton" v-show="loading">
+            <div class="list">
+                <div class="skeleton-article-item" v-for="i in 10" :key="i">
+                    <div class="text">
+                        <h1 class="skeleton-animation"></h1>
+                        <div class="tags">
+                            <span class="skeleton-animation"></span>
+                            <span class="skeleton-animation"></span>
+                        </div>
+                    </div>
+                    <div class="img skeleton-animation"></div>
+                </div>
+            </div>
+        </div>
         <div class="right">
-            <div class="title">
-                <span class="blog-category"></span>文章分类
-            </div>
-            <div class="content">
-                <div class="category-item" :class="{active: pagination.category === 0}"
-                     @click="handleQueryByCategory(0)">全部
+            <div class="card">
+                <div class="title">
+                    <span class="blog-category"></span>文章分类
                 </div>
-                <div class="category-item" :class="{active: pagination.category === item.id}" v-for="item in categories"
-                     :key="item.id" @click="handleQueryByCategory(item.id)">{{item.name}}
+                <div class="content">
+                    <div class="category-item"
+                         @click="handleQueryByCategory(0)">
+                        <div :style="{
+                            backgroundColor: pagination.category === 0 ? '#fff':'#6890da',
+                            borderColor: '#6890da',
+                            color: pagination.category === 0 ? '#6890da' : '#f5f5f5'
+                          }"
+                        >全部</div>
+                    </div>
+                    <div class="category-item"
+                         v-for="(item, index) in categories"
+                         :key="item.id" @click="handleQueryByCategory(item.id)">
+                        <div :style="{
+                        backgroundColor: pagination.category === item.id? '#fff':colors[(index + 5)%5],
+                        borderColor:  colors[(index + 5)%5],
+                        color: pagination.category === item.id ? colors[(index + 5)%5] : '#f5f5f5'
+                        }">
+                            {{item.name}}
+                        </div>
+                    </div>
                 </div>
             </div>
+
+            <div class="card">
             <div class="title tag-title">
                 <span class="blog-tag"></span>文章标签
             </div>
@@ -39,6 +70,7 @@
                      :style="{color: '#fff',backgroundColor: item.color, borderColor: item.color}"
                      :key="item.id">{{item.name}}
                 </div>
+            </div>
             </div>
         </div>
     </div>
@@ -60,7 +92,7 @@ export default {
   data () {
     return {
       ops: scroll,
-      colors: ['EF476F', 'ebad1d', '06D6A0', '118AB2', '073B4C'],
+      colors: ['#da5252', '#e3974a', '#47be66', '#43a2c2', '#3e6674'],
       tags: [],
       categories: [],
       articles: [],
@@ -73,16 +105,22 @@ export default {
         tags: []
       },
       searchVisible: false,
-      loadCompleted: false
+      loadCompleted: false,
+      loading: false,
+      pullLoading: false
     }
   },
   methods: {
     init () {
+      this.loading = true
       GetArticleUnion(this.pagination).then(res => {
         if (res.code === 0) {
           this.articles = res.data.list || []
           this.pagination.total = res.data.total
         }
+        this.loading = false
+      }).catch(() => {
+        this.loading = false
       })
     },
     initTags () {
@@ -100,6 +138,7 @@ export default {
       })
     },
     initLoadMore () {
+      this.pullLoading = true
       GetArticleUnion(this.pagination).then(res => {
         if (res.code === 0) {
           let data = res.data.list || []
@@ -108,6 +147,9 @@ export default {
           }
           this.articles = [...this.articles, ...data]
         }
+        this.pullLoading = false
+      }).catch(() => {
+        this.pullLoading = false
       })
     },
     handleLike (item) {
@@ -138,7 +180,7 @@ export default {
     },
     handleLoadMore ({ process }) {
       // console.log(e)
-      if (process === 1 && !this.loadCompleted) {
+      if (process >= 0.8 && !this.loadCompleted) {
         this.pagination.pageNo += 1
         this.initLoadMore()
       }
@@ -166,38 +208,25 @@ export default {
 
         .right {
             height: 100%;
-            width: 250px;
-            background-color: #fff;
-
+            width: 400px;
+            padding: $-padding;
+            .card{
+                background: #fff;
+                border: 1px solid #e8e8e8;
+                & + .card{
+                    margin-top: 24px;
+                }
+            }
             .title {
                 height: 50px;
                 line-height: 50px;
                 padding-left: $-padding;
                 font-size: 16px;
-                color: #7bb360;
+                color: #666;
                 position: relative;
 
                 span {
                     margin-right: $-margin;
-                }
-
-                &:after {
-                    content: "";
-                    display: block;
-                    height: 10px;
-                    width: 150px;
-                    background: #7bb360;
-                    opacity: .1;
-                    position: absolute;
-                    bottom: 14px;
-                }
-
-                &.tag-title {
-                    color: #f56c6c;
-
-                    &:after {
-                        background: #f56c6c;
-                    }
                 }
             }
 
@@ -230,6 +259,72 @@ export default {
         }
     }
 
+    .skeleton {
+        height: 100%;
+        flex: 1;
+        display: flex;
+        overflow: hidden;
+
+        .list {
+            flex: 1;
+            overflow: hidden;
+            padding: $-padding*2 0;
+        }
+
+        &-article-item {
+            max-width: 920px;
+            width: 90%;
+            margin: 0 auto;
+            margin-bottom: $-margin * 2;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+            height: 230px;
+            overflow: hidden;
+            display: flex;
+
+            &:nth-child(2n) {
+                flex-direction: row-reverse;
+
+                .text {
+                    & > * {
+                        float: right;
+                    }
+
+                    .tags {
+                        span {
+                            margin-right: 0;
+                            margin-left: $-margin;
+                        }
+                    }
+                }
+            }
+
+            .text {
+                flex: 1;
+                padding: 0 $-padding;
+
+                h1 {
+                    height: 32px;
+                    width: 60%;
+                }
+
+                .tags {
+                    span {
+                        display: inline-block;
+                        width: 100px;
+                        height: 32px;
+                        margin-right: $-margin;
+                    }
+                }
+            }
+
+            .img {
+                width: 50%;
+            }
+        }
+    }
+
     .search-btn {
         position: fixed;
         width: 60px;
@@ -246,19 +341,30 @@ export default {
 
     .category-item {
         display: inline-block;
-        line-height: 30px;
-        margin-right: $-margin*2;
-        margin-bottom: $-margin*2;
+        height: 50px;
+        line-height: 38px;
         font-size: 16px;
         cursor: pointer;
-        color: #666;
+        width: 50%;
+        text-align: center;
+        color: #f2f4f5;
 
-        &:hover {
-            text-decoration: underline;
+        &:nth-child(2n+1) {
+            border-right: 12px solid #fff;
+            border-bottom: 12px solid #fff;
         }
 
-        &.active {
-            color: $-active-color;
+        &:nth-child(2n) {
+            border-left: 12px solid #fff;
+            border-bottom: 12px solid #fff;
+        }
+
+        & > div {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #666;
+            border-radius: 5px;
+            overflow: hidden;
         }
     }
 
@@ -279,6 +385,21 @@ export default {
         line-height: 32px;
     }
 
+    @keyframes skeleton-animate {
+        0% {
+            background-position: 100% 50%
+        }
+        to {
+            background-position: 0 50%
+        }
+    }
+
+    .skeleton-animation {
+        background: linear-gradient(45deg, hsla(0, 0%, 74.5%, .2) 25%, hsla(0, 0%, 50.6%, .24) 37%, hsla(0, 0%, 74.5%, .2) 63%);
+        background-size: 400% 100%;
+        animation: skeleton-animate 1s ease infinite;
+    }
+
     @media (max-width: 780px) {
         .article {
             margin-top: 60px;
@@ -290,6 +411,25 @@ export default {
         }
         .search-btn {
             display: block;
+        }
+        .skeleton-article-item {
+            display: block;
+            height: 300px;
+
+            &:nth-child(2n) {
+                .text > * {
+                    float: none;
+                }
+            }
+
+            .text {
+                height: 150px;
+            }
+
+            .img {
+                width: 100%;
+                height: 150px;
+            }
         }
     }
 </style>

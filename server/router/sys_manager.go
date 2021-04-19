@@ -38,5 +38,9 @@ func InitManagerRouter(router *gin.RouterGroup) {
 
 			fileGroup.DELETE("delete", v1.DeleteFile)
 		}
+		commentGroup := managerGroup.Group("comment")
+		{
+			commentGroup.POST("add", v1.AddComment)
+		}
 	}
 }

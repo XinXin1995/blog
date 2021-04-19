@@ -73,6 +73,17 @@ func Login(c *gin.Context) {
 		resp.FailWidthMessage("验证码错误", c)
 	}
 }
+func LoginForVisitor (c *gin.Context)  {
+	var L request.Login
+	_ = c.ShouldBindJSON(&L)
+	u := model.SysUser{Username: L.Username, Password: L.Password}
+	if err, user := service.Login(u); err != nil {
+		global.GVA_LOG.Error("登陆失败! 用户名不存在或者密码错误", zap.Any("err", err))
+		resp.FailWidthMessage("用户名不存在或者密码错误", c)
+	} else {
+		tokenNext(c, &user)
+	}
+}
 
 func tokenNext(c *gin.Context, user *model.SysUser) {
 	j := &middleware.JWT{
