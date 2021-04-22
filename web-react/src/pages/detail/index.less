@@ -1,0 +1,46 @@
+@unit: 8px;
+@borderColor: #f0f0f0;
+.article{
+  padding: @unit*2;
+  display: flex;
+  &-wrap{
+    flex: 1;
+    overflow: hidden;
+  }
+  &-title{
+    text-align: center;
+    border-bottom: 1px solid @borderColor;
+  }
+  .title{
+    color: #0d1a26;
+    font-size: 1.7em;
+    font-weight: 400;
+  }
+  &-other{
+    margin-bottom: @unit*2;
+    .icon {
+      color: #999;
+      margin-right: @unit;
+    }
+  }
+  &-content{
+    padding: @unit*2;
+  }
+  &-index{
+    width: 300px;
+    .index{
+      &.fixed{
+        position: fixed;
+        top: 0;
+        bottom: 0;
+      }
+    }
+    .ant-anchor-wrapper{
+      overflow-x: visible;
+      overflow-y: hidden;
+      &:hover{
+        overflow-y: auto;
+      }
+    }
+  }
+}

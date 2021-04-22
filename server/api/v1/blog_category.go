@@ -18,6 +18,15 @@ func GetCategories(c *gin.Context) {
 	response.OkWithData(categories, c)
 }
 
+func GetCategoryStatistic(c *gin.Context) {
+	categories, err := service.GetCategoriesStatistic()
+	if err != nil {
+		response.FailWidthMessage("分类列表查询失败", c)
+		return
+	}
+	response.OkWithData(categories, c)
+}
+
 func CreateCategory(c *gin.Context) {
 	var param request.AddCategory
 	err := c.ShouldBindJSON(&param)

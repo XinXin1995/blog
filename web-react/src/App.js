@@ -1,25 +1,41 @@
-import logo from './logo.svg';
-import './App.css';
+import routes from '@/routes'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 
-function App() {
+const App = props => {
+  function renderRoutes (routes, contextPath) {
+    const children = []
+
+    const renderRoute = (item, routeContextPath) => {
+      let newContextPath = item.path ? `${routeContextPath}/${item.path}` : routeContextPath
+      newContextPath = newContextPath.replace(/\/+/g, '/')
+      if (!item.component) {
+        return
+      }
+      if (item.childRoutes) {
+        const childRoutes = renderRoutes(item.childRoutes, newContextPath)
+        children.push(
+          <Route
+            key={newContextPath}
+            render={props => <item.component {...props}>{childRoutes}</item.component>}
+            path={newContextPath}
+          />
+        )
+      } else {
+        children.push(<Route key={newContextPath} component={item.component} path={newContextPath} exact/>)
+      }
+    }
+
+    routes.forEach(item => renderRoute(item, contextPath))
+
+    return <Switch>{children}</Switch>
+  }
+
+  const Routers = renderRoutes(routes, '/')
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <BrowserRouter>
+      {Routers}
+    </BrowserRouter>
+  )
 }
 
-export default App;
+export default App
