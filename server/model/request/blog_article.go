@@ -22,5 +22,5 @@ type ArticleList struct {
 	Tags        []int `json:"tags"`
 	Category    int   `json:"category"`
 	OrderType   int   `json:"orderType"`
-	WithContent bool  `json:"widthContent"`
+	WithContent bool  `json:"withContent"`
 }

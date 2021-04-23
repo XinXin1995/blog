@@ -76,6 +76,9 @@
   white-space: nowrap;
   border-left: 1px solid @border-color;
   transition: width .5s;
+  .ant-input-group-addon{
+    display: none;
+  }
   .search-icon{
     color: #ced4d9;
     position: relative;
@@ -172,7 +175,7 @@
     }
   }
 }
-@media only screen and (max-width: 768px){
+@media only screen and (max-width: 736px){
   #header {
     text-align: center;
     .menu-row{
@@ -181,5 +184,8 @@
   }
   #logo{
     padding-left: 0;
+  }
+  #sidebar{
+    display: none;
   }
 }

@@ -7,28 +7,16 @@ import Navigation from './navigation'
 import { GetArticleDetail } from '@/api/articles'
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
-import useMount from '@/hooks/useMount'
 
 const Detail = () => {
   let { id } = useParams()
   const [item, setItem] = useState({})
   const [fixed, setFixed] = useState(false)
-  const init = () => {
-    GetArticleDetail(id).then(res => {
-      if (res.code === 0) {
-        let data = res.data
-        data.content = translateMarkdown(data.content)
-        setItem(data)
-      }
-    })
-  }
+
   const scrollCallBack = () => {
     let scrollTop = getScrollTop()
     setFixed(scrollTop > 104)
   }
-  useMount(() => {
-    init()
-  })
   useEffect(() => {
     window.addEventListener('scroll', scrollCallBack)
 
@@ -36,6 +24,18 @@ const Detail = () => {
       window.removeEventListener('scroll', scrollCallBack)
     }
   })
+  useEffect(() => {
+    const init = () => {
+      GetArticleDetail(id).then(res => {
+        if (res.code === 0) {
+          let data = res.data
+          data.content = translateMarkdown(data.content)
+          setItem(data)
+        }
+      })
+    }
+    init()
+  }, [id])
   return (
     <div className={'article'}>
       <div className={'article-wrap'}>

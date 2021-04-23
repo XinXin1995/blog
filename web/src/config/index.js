@@ -1,5 +1,5 @@
-export const BASE_URL = 'https://api.wuchangxin.club/'
-// export const BASE_URL = 'http://127.0.0.1:8888/'
+// export const BASE_URL = 'https://api.wuchangxin.club/'
+export const BASE_URL = 'http://192.168.1.146:8888/'
 
 export const scroll = {
   vuescroll: {

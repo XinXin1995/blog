@@ -1,0 +1,19 @@
+@unit: 8px;
+.archives{
+  padding: @unit*2;
+  text-align: center;
+  .ant-badge{
+    opacity: .8;
+    &:hover{
+      opacity: 1;
+    }
+    &+.ant-badge{
+      margin-left: @unit*4;
+    }
+  }
+  .ant-tag{
+    font-size: 14px;
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+}

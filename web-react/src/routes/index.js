@@ -12,6 +12,11 @@ const routes = [
         component: lazy(() => import('@/pages/home'))
       },
       {
+        path: '/list',
+        name: 'list',
+        component: lazy(() => import('@/pages/articleList'))
+      },
+      {
         path: '/detail/:id',
         name: 'detail',
         component: lazy(() => import('@/pages/detail'))
@@ -25,11 +30,6 @@ const routes = [
         path: '/message',
         name: 'message',
         component: lazy(() => import('@/pages/message'))
-      },
-      {
-        path: '/note',
-        name: 'note',
-        component: lazy(() => import('@/pages/note'))
       },
       {
         path: '/about',

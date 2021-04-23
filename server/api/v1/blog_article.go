@@ -49,6 +49,23 @@ func GetArticle(c *gin.Context) {
 	}
 }
 
+func SetTopArticle(c *gin.Context) {
+
+	articleId, err := strconv.Atoi(c.Query("id"))
+	if err != nil {
+		response.FailWidthMessage("id错误", c)
+		return
+	}
+	err = service.SetTopArticle(articleId)
+	if err != nil {
+		response.FailWidthMessage("更新失败", c)
+		global.GVA_LOG.Error("文章置顶设置失败", zap.Any("err", err))
+		return
+	}
+	response.OkWithNil(c)
+
+}
+
 func GetArticleList(c *gin.Context) {
 	var param request.ArticleList
 	err := c.ShouldBindJSON(&param)

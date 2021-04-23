@@ -40,6 +40,10 @@ export function DelArticle ({ id }) {
   return request.delete('/api/manager/article/delete', { params: { id } })
 }
 
+export function TopArticle ({ id }) {
+  return request.get('/api/article/top', { params: { id } })
+}
+
 export function like (id) {
   return request.get('/api/article/like', { params: { id } })
 }

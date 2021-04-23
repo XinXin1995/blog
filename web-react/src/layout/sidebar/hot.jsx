@@ -1,30 +1,30 @@
 import { Divider } from 'antd'
+import { GetArticles } from '@/api/articles'
+import { useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import useMount from '@/hooks/useMount'
 
-const list = [
-  {
-    title: '用 node 写命令行工具'
-  },
-  {
-    title: '用 node 写命令行工具'
-  },
-  {
-    title: '用 node 写命令行工具'
-  },
-  {
-    title: '用 node 写命令行工具'
-  },
-  {
-    title: '用 node 写命令行工具'
-  }
-]
 
 function Hot () {
+  const history = useHistory()
+  const [list, setList] = useState([])
+  useMount(() => {
+    GetArticles({ pageSize: 5, pageNo: 1, orderType: 3 }).then(res => {
+      if (res.code === 0) {
+        let list = res.data.list || []
+        setList(list)
+      }
+    })
+  })
+  const handleDirect = (v) => {
+    history.push('/detail/' + v.id)
+  }
   return (
     <div className={'hot'}>
-      <Divider orientation={'left'}>Hot</Divider>
+      <Divider orientation={'left'}>置顶</Divider>
 
       <ul>
-        {list.map((v, i) => <li key={i}>{v.title}</li>)}
+        {list.map((v, i) => <li key={i} onClick={() => handleDirect(v)}>{v.title}</li>)}
       </ul>
     </div>
   )

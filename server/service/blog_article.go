@@ -45,6 +45,8 @@ func GetArticleList(param *request.ArticleList) (err error, count int64, list []
 		db = db.Order("created_at desc")
 	} else if param.OrderType == 2 {
 		db = db.Order("likes desc")
+	} else if param.OrderType == 3 {
+		db = db.Order("top desc")
 	}
 	err = db.Model(&model.BlogArticle{}).Count(&count).Error
 	var columns = []string{
@@ -100,4 +102,19 @@ func DelArticle(id int) error {
 		return errors.New("文章不存在")
 	}
 	return db.Where("id = ?", id).Delete(&model.BlogArticle{}).Error
+}
+
+func SetTopArticle(id int) error {
+	var article model.BlogArticle
+	if errors.Is(global.GVA_DB.Where("id = ?", id).First(&article).Error, gorm.ErrRecordNotFound) {
+		return errors.New("为找到相关文章")
+	}
+	var maxTop int
+	row := global.GVA_DB.Raw("SELECT MAX(top) FROM blog_articles").Row()
+	if err := row.Scan(&maxTop);err != nil {
+		return err
+	}
+	article.Top = maxTop + 1
+	return global.GVA_DB.Select("Top").Updates(&article).Error
+
 }

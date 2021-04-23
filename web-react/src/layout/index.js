@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { Row, Col } from 'antd'
+import { Row, Col, BackTop } from 'antd'
 import Nav from './Nav'
 import SearchBox from '@/layout/searchBox'
 import Sidebar from './sidebar'
@@ -45,16 +45,17 @@ const Layout = props => {
       </header>
       <main id={'main'}>
         <Row>
-          <Col ref={col} xs={24} sm={24} md={6} lg={6} xl={5} xxl={4}>
+          <Col ref={col} xs={0} sm={0} md={6} lg={6} xl={5} xxl={4}>
             <Sidebar fixed={sidebarFixed} width={col && col.clientWidth}/>
           </Col>
-          <Col xs={0} sm={0} md={18} lg={18} xl={19} xxl={20}>
+          <Col xs={24} sm={24} md={18} lg={18} xl={19} xxl={20}>
             <div className={'main-wrap'}>
               {props.children}
             </div>
           </Col>
         </Row>
       </main>
+      <BackTop />
     </>
   )
 }

@@ -37,7 +37,7 @@
                             </el-button>
                         </template>
                     </el-table-column>
-                    <el-table-column align="center" width="150px" label="分类" >
+                    <el-table-column align="center" width="150px" label="分类">
                         <template slot-scope="scope">
                             {{scope.row.categoryName || '--'}}
                         </template>
@@ -51,7 +51,10 @@
                     </el-table-column>
                     <el-table-column align="center" width="100px" label="操作">
                         <template slot-scope="scope">
-                            <el-button type="text" @click="handleDel(scope.row)"><i class="el-icon-delete"></i></el-button>
+                            <el-button type="text" @click="handleDel(scope.row)"><i class="el-icon-delete"></i>
+                            </el-button>
+                            <el-button type="text" @click="handleTop(scope.row)"><i class="el-icon-caret-top"></i>
+                            </el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -74,7 +77,7 @@
 
 <script>
 import { scroll } from '@/config'
-import { GetArticleUnion, DelArticle } from '@/api/article'
+import { GetArticleUnion, DelArticle, TopArticle } from '@/api/article'
 import { GetAllTags } from '@/api/tags'
 import { GetAllCategories } from '@/api/category'
 
@@ -89,6 +92,7 @@ export default {
         pageNo: 1,
         pageSize: 10,
         keyword: '',
+        orderType: 3,
         tags: [],
         category: 0
       }
@@ -109,6 +113,16 @@ export default {
       }).then(res => {
         if (res.code === 0) {
           this.$message.success('删除成功')
+          this.init()
+        }
+      })
+    },
+    handleTop (item) {
+      this.$confirm('是否确认置顶', '提示').then(() => {
+        return TopArticle({ id: item.id })
+      }).then(res => {
+        if (res.code === 0) {
+          this.$message.success('置顶成功')
           this.init()
         }
       })

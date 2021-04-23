@@ -24,7 +24,12 @@ export const asyncComponent = importComponent =>
       return RenderComponet ? (
         <RenderComponet {...this.props} />
       ) : (
-        <Spin  className='async-com-loading' />
+        <div style={{
+          padding: '50px 0',
+          textAlign: 'center'
+        }}>
+          <Spin  />
+        </div>
       )
     }
   }

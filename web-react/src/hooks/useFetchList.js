@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from 'react'
-import axios from '@/utils/request'
 
 import { useLocation, useHistory } from 'react-router-dom'
 import { decodeQuery } from '@/utils'
@@ -14,15 +13,15 @@ import useMount from './useMount'
  */
 export default function useFetchList (
   {
-    requestUrl = '',
+    requestMethod = new Promise(),
     queryParams = null,
     withLoading = true,
     fetchDependence = []
   }
 ) {
-  const [dataList, setDataList] = useState([])
+  const [list, setDataList] = useState([])
   const [loading, setLoading] = useState(false)
-  const [pagination, setPagination] = useState({ current: 1, pageSize: 10, total: 0 })
+  const [pagination, setPagination] = useState({ pageNo: 1, pageSize: 10, total: 0 })
 
   const location = useLocation()
   const history = useHistory()
@@ -38,7 +37,7 @@ export default function useFetchList (
       const params = decodeQuery(location.search)
       fetchWithLoading(params)
     }
-  }, fetchDependence)
+  }, fetchDependence) // eslint-disable-line  react-hooks/exhaustive-deps
 
   function fetchWithLoading (params) {
     withLoading && setLoading(true)
@@ -47,26 +46,28 @@ export default function useFetchList (
 
   function fetchDataList (params) {
     const requestParams = {
-      page: pagination.current,
+      pageNo: pagination.pageNo,
       pageSize: pagination.pageSize,
       ...queryParams,
       ...params
     }
-
-    requestParams.page = parseInt(requestParams.page)
+    requestParams.pageNo = parseInt(requestParams.pageNo)
     requestParams.pageSize = parseInt(requestParams.pageSize)
-    axios
-      .get(requestUrl, { params: requestParams })
-      .then(response => {
-        pagination.total = response.count
-        pagination.current = parseInt(requestParams.page)
+    requestParams.category = parseInt(requestParams.category)
+    requestParams.orderType = parseInt(requestParams.orderType)
+    requestMethod && requestMethod(requestParams).then(res => {
+      if(res.code === 0){
+        let data = res.data
+        pagination.pageNo = parseInt(requestParams.pageNo)
         pagination.pageSize = parseInt(requestParams.pageSize)
+        pagination.category = parseInt(requestParams.category)
+        pagination.orderType = parseInt(requestParams.orderType)
+        pagination.total = data.total
         setPagination({ ...pagination })
-        setDataList(response.rows)
-        // console.log('%c useFetchList: ', 'background: yellow', requestParams, response)
-        withLoading && setLoading(false)
-      })
-      .catch(e => withLoading && setLoading(false))
+        setDataList(data.list)
+      }
+      withLoading && setLoading(false)
+    }).catch(e => withLoading && setLoading(false))
   }
 
   const onFetch = useCallback(
@@ -74,24 +75,25 @@ export default function useFetchList (
       withLoading && setLoading(true)
       fetchDataList(params)
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [queryParams]
   )
 
   const handlePageChange = useCallback(
-    page => {
+    pageNo => {
       // return
-      const search = location.search.includes('page=')
-        ? location.search.replace(/(page=)(\d+)/, `$1${page}`)
-        : `?page=${page}`
+      const search = location.search.includes('pageNo=')
+        ? location.search.replace(/(pageNo=)(\d+)/, `$1${pageNo}`)
+        : `?pageNo=${pageNo}`
       const jumpUrl = location.pathname + search
-
       history.push(jumpUrl)
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [queryParams, location.pathname]
   )
 
   return {
-    dataList,
+    list,
     loading,
     pagination: {
       ...pagination,

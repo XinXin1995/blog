@@ -13,7 +13,7 @@ function Nav () {
       <Menu.Item key="/"  icon={<HomeOutlined />}>
         首页
       </Menu.Item>
-      <Menu.Item key="/note" icon={<BookOutlined />}>
+      <Menu.Item key="/list?pageNo=1&category=5" icon={<BookOutlined />}>
         笔记
       </Menu.Item>
       <Menu.Item key="/archives" icon={<FolderOutlined />}>

@@ -29,11 +29,11 @@ const formatDate = (dateStr) => {
 const Note = props => {
   const { list, pagination } = useFetchList({
     requestMethod: GetArticles,
-    queryParams: { category: 5,pageSize: 15 },
+    queryParams: { pageSize: 15, category: 0, orderType: 1 },
     fetchDependence: [props.location.pathname, props.location.search]
   })
   return (
-    <div className={'notes'}>
+    <div className={'article-list'}>
       {
         <Timeline mode={'left'}>
           {
