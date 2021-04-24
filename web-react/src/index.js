@@ -5,13 +5,14 @@ import store from './redux'
 import { Provider } from 'react-redux'
 import reportWebVitals from './reportWebVitals';
 import 'antd/dist/antd.css'
+import { Provider as BusProvider } from '@/hooks/useBus'
 
 ReactDOM.render(
-  <React.StrictMode>
+  <BusProvider>
     <Provider store={store}>
     <App />
     </Provider>
-  </React.StrictMode>,
+  </BusProvider>,
   document.getElementById('root')
 );
 

@@ -28,7 +28,6 @@ func AddComment(c *gin.Context) {
 		ParentId:   param.ParentId,
 		Content:    param.Content,
 		Username:   user.Username,
-		UserAvatar: user.Avatar,
 	}
 	err = service.AddComment(&comment)
 	if err != nil {
@@ -47,11 +46,17 @@ func GetCommentList(c *gin.Context) {
 		response.FailWidthMessage("参数错误", c)
 		return
 	}
-	err, comments := service.GetCommentTree(param)
+	err, count, comments := service.GetCommentTree(param)
 	if err != nil {
 		response.FailWidthMessage("获取评论列表失败", c)
 		return
 	}
-	response.OkWithData(comments, c)
+	result := response.PageResult{
+		Total: count,
+		List: comments,
+		Page: param.PageNo,
+		PageSize: param.PageSize,
+	}
+	response.OkWithData(result, c)
 
 }

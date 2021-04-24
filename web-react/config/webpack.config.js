@@ -540,7 +540,7 @@ module.exports = function (webpackEnv) {
             {
               test: lessRegex,
               exclude: lessModuleRegex,
-              use: getStyleLoaders(
+              use: [...getStyleLoaders(
                 {
                   importLoaders: 2,
                   sourceMap: isEnvProduction
@@ -548,7 +548,12 @@ module.exports = function (webpackEnv) {
                     : isEnvDevelopment,
                 },
                 'less-loader'
-              ),
+              ), {
+                loader: 'style-resources-loader',
+                options: {
+                    patterns:[path.resolve(__dirname, '../src/assets/style/variable.less')]
+                }
+              }],
               sideEffects: true,
             },
 

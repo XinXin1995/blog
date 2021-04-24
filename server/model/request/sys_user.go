@@ -1,10 +1,9 @@
 package request
 
 type RegisterStruct struct {
-	Username string             `json:"username" binding:"required"`
-	Password string             `json:"password" binding:"required"`
-	Nickname string             `json:"nickname" binding:"required"`
-	Avatar   string             `json:"avatar"`
+	Username string `json:"username" binding:"required"`
+	Password string `json:"password" binding:"required"`
+	Email    string `json:"email" binding:"required"`
 }
 
 type RegisterUserRole struct {

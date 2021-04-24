@@ -6,6 +6,7 @@ import Sidebar from './sidebar'
 import logoSrc from '@/assets/img/logo.svg'
 import './layout.less'
 import { getScrollTop} from '@/utils'
+import PublicComponent from "@/components/public";
 
 
 const Layout = props => {
@@ -31,7 +32,7 @@ const Layout = props => {
         <Row>
           <Col xs={24} sm={24} md={6} lg={6} xl={5} xxl={4}>
             <h1>
-              <a id="logo" href="javasciprt:void(0);">
+              <a id="logo" href="/" >
                 <img src={logoSrc} alt="logo"/>
                 JACBO WOO
               </a>
@@ -55,6 +56,7 @@ const Layout = props => {
           </Col>
         </Row>
       </main>
+      <PublicComponent />
       <BackTop />
     </>
   )

@@ -37,7 +37,7 @@ func Register(c *gin.Context) {
 	user := model.SysUser{
 		Username: R.Username,
 		Password: R.Password,
-		Avatar:   R.Avatar,
+		Email:   R.Email,
 	}
 	err := service.Register(&user)
 	if err != nil {

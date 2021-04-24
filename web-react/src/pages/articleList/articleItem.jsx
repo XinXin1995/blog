@@ -22,11 +22,23 @@ const ArticleItem = props => {
 
   const history = useHistory()
 
-  const handleRedirect = () => {
+  const handleRedirect = (e) => {
+    e.stopPropagation()
+    e.preventDefault()
     history.push('/detail/' + item.id)
   }
+  const handleSearchByCategory = (e, category) => {
+    e.stopPropagation()
+    e.preventDefault()
+    history.push('/list?pageNo=1&pageSize=15&category='+category)
+  }
+  const handleSearchByTag = (e, tagId) => {
+    e.stopPropagation()
+    e.preventDefault()
+    history.push('/list?pageNo=1&pageSize=15&tag='+tagId)
+  }
   return (
-    <div className={'article-item'} onClick={handleRedirect}>
+    <div className={'article-item'} onClick={(e) => handleRedirect(e)}>
       {
         isLessThan736 ?
           (
@@ -56,11 +68,11 @@ const ArticleItem = props => {
         {item.likes}
         <Divider type={'vertical'}/>
         <PartitionOutlined className={'icon'}/>
-        <Tag color={'blue'}>{item.category && item.category.name}</Tag>
+        <Tag color={'blue'} onClick={(e) => handleSearchByCategory(e, item.categoryId)}>{item.category && item.category.name}</Tag>
         <Divider type={'vertical'}/>
         <TagsOutlined className={'icon'}/>
         {item.tags && item.tags.map(it => (
-          <Tag key={it.id} color={it.color}>{it.name}</Tag>
+          <Tag onClick={(e)=>handleSearchByTag(e, it.id)} key={it.id} color={it.color}>{it.name}</Tag>
         ))}
       </div>
     </div>

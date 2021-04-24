@@ -12,10 +12,14 @@ func AddComment(comment *model.BlogComment) error {
 	return err
 }
 
-func GetCommentTree(param request.TreeComment) (err error, comments []model.BlogComment) {
+func GetCommentTree(param request.TreeComment) (err error, count int64, comments []model.BlogComment) {
 	limit := param.PageSize
 	offset := (param.PageNo - 1) * param.PageSize
-	err = global.GVA_DB.Limit(limit).Offset(offset).Where("parent_id = 0 AND article_id = ?", param.ArticleId).Find(&comments).Error
+	err = global.GVA_DB.Model(&model.BlogComment{}).Where("parent_id = 0 AND article_id = ?", param.ArticleId).Count(&count).Error
+	if err != nil {
+		return
+	}
+	err = global.GVA_DB.Limit(limit).Offset(offset).Where("parent_id = 0 AND article_id = ?", param.ArticleId).Order("created_at desc").Find(&comments).Error
 	if err != nil {
 		return
 	}
@@ -28,7 +32,7 @@ func GetCommentTree(param request.TreeComment) (err error, comments []model.Blog
 	for i := 0; i < len(comments); i++ {
 		setCommentChildren(&comments[i], treeChildren)
 	}
-	return err, comments
+	return err, count, comments
 }
 
 func getChildrenTreeMap(childrenList []model.BlogComment) map[string][]model.BlogComment {

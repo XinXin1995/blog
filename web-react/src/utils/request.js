@@ -18,7 +18,7 @@ service.interceptors.request.use(
   config => {
     const token = GetToken()
     if (token) {
-      config.headers.common['token'] = token
+      config.headers['token'] = token
     }
     return config
   },
@@ -31,6 +31,9 @@ service.interceptors.request.use(
 // 拦截响应
 service.interceptors.response.use(
   response => {
+    if(response.data.code !== 0){
+      message.error(response.data.msg)
+    }
     // Any status code that lie within the range of 2xx cause this function to trigger
     return response.data
   },

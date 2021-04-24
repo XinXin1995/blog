@@ -1,5 +1,3 @@
-@unit: 8px;
-@borderColor: #f0f0f0;
 .article{
   padding: @unit*2;
   display: flex;
@@ -45,6 +43,41 @@
   }
 }
 
+.comments{
+  padding: 0 @unit*2;
+  &-header{
+    .dropdown{
+      cursor: pointer;
+    }
+    .right{
+      float: right;
+    }
+    .ant-divider{
+      margin-top: 0;
+    }
+  }
+  .ant-comment-avatar{
+
+  }
+  .ant-comment-content-author{
+    &-name,&-time{
+      font-size: 14px;
+    }
+  }
+}
+.comment-form{
+  .ant-comment-content-author{
+    font-size: 14px;
+  }
+  &-btn{
+    color: #096dd9;
+    text-align: right;
+    margin: @unit 0;
+    .ant-btn{
+      margin-left: @unit*2;
+    }
+  }
+}
 @media (max-width: 736px) {
   .article{
     padding: @unit;

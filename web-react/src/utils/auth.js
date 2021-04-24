@@ -1,13 +1,29 @@
-const TokenKey = 'JACBO_BLOG_TOKEN'
+import * as store from './localStorage'
 
-export function SetToken (token) {
-  localStorage.setItem(TokenKey, token)
+const TokenKey = 'JACOB_BLOG_TOKEN'
+const UserKey = 'JACOB_BLOG_USER'
+
+export function SetToken(token) {
+    store.save(TokenKey, token)
 }
 
-export function GetToken () {
-  localStorage.getItem(TokenKey)
+export function GetToken() {
+    return store.get(TokenKey)
 }
 
-export function RmToken () {
-  localStorage.removeItem(TokenKey)
+export function RmToken() {
+    store.remove(TokenKey)
+}
+
+
+export function SetUser(userinfo) {
+    store.save(UserKey, userinfo)
+}
+
+export function GetUser() {
+    return store.get(UserKey)
+}
+
+export function RMUser() {
+    store.remove(UserKey)
 }
