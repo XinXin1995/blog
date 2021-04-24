@@ -6,8 +6,8 @@ import (
 	"blog/model/request"
 	"errors"
 	"fmt"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
-	"strconv"
 )
 
 func AddArticle(article *model.BlogArticle, tags []uint) (err error) {
@@ -29,17 +29,25 @@ func GetArticleList(param *request.ArticleList) (err error, count int64, list []
 	offset := (param.PageNo - 1) * param.PageSize
 	limit := param.PageSize
 	db := global.GVA_DB
+
+	if len(param.Tags) > 0 {
+		var articleIds []uint
+		rows, err := db.Raw(" select DISTINCT(blog_article_id) from article_tags where blog_tag_id in ?", param.Tags).Rows()
+		if err != nil {
+			global.GVA_LOG.Error("get article data column(tags) err", zap.Any("err", err))
+		}
+		for rows.Next() {
+			var id uint
+			_ = rows.Scan(&id)
+			articleIds = append(articleIds, id)
+		}
+		db = db.Where("id in ?", articleIds)
+	}
 	if len(param.Keyword) > 0 {
 		db = db.Where("title LIKE ?", "%"+param.Keyword+"%")
 	}
 	if param.Category > 0 {
 		db = db.Where("category_id = ?", param.Category)
-	}
-	if len(param.Tags) > 0 {
-		for _, v := range param.Tags {
-			s := strconv.Itoa(v)
-			db = db.Where("tag_id_group LIKE ?", "%"+s+"%")
-		}
 	}
 	if param.OrderType == 1 {
 		db = db.Order("created_at desc")
