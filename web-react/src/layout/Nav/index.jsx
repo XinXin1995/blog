@@ -1,5 +1,5 @@
 import { Menu } from 'antd'
-import { HomeOutlined, BookOutlined, FolderOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons'
+import { HomeOutlined, BookOutlined, FolderOutlined,  UserOutlined } from '@ant-design/icons'
 import { useLocation, useHistory } from 'react-router-dom'
 
 function Nav () {
@@ -18,9 +18,6 @@ function Nav () {
       </Menu.Item>
       <Menu.Item key="/archives" icon={<FolderOutlined />}>
         归档
-      </Menu.Item>
-      <Menu.Item key="/message" icon={<MessageOutlined />}>
-        留言
       </Menu.Item>
       <Menu.Item key="/about" icon={<UserOutlined />}>
         关于

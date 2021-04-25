@@ -30,7 +30,7 @@ const Layout = props => {
     <>
       <header id="header">
         <Row>
-          <Col xs={24} sm={24} md={6} lg={6} xl={5} xxl={4}>
+          <Col xs={20} sm={20} md={6} lg={6} xl={5} xxl={4}>
             <h1>
               <a id="logo" href="/" >
                 <img src={logoSrc} alt="logo"/>
@@ -38,7 +38,7 @@ const Layout = props => {
               </a>
             </h1>
           </Col>
-          <Col className={'menu-row'} xs={0} sm={0} md={18} lg={18} xl={19} xxl={20}>
+          <Col className={'menu-row'} xs={4} sm={4} md={18} lg={18} xl={19} xxl={20}>
             <SearchBox/>
             <Nav/>
           </Col>
