@@ -5,7 +5,7 @@ type AddArticleParam struct {
 	Content  string `json:"content" binding:"required"`
 	Category uint   `json:"category" binding:"required"`
 	Tags     []uint `json:"tags" binding:"required"`
-	Thumb    string `json:"thumb" binding:"required"`
+	Thumb    string `json:"thumb"`
 }
 
 type UpdateArticleParam struct {

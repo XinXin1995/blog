@@ -1,5 +1,5 @@
 import { Rate } from 'antd'
-import { MailOutlined } from '@ant-design/icons'
+import { MailOutlined, WechatOutlined } from '@ant-design/icons'
 
 const personal = () => {
   const skills = [
@@ -24,12 +24,16 @@ const personal = () => {
       rate: 2
     },
     {
+      label: '了解 Docker 的使用方式',
+      rate: 2
+    },
+    {
       label: '熟悉常用的算法与数据结构',
       rate: 2
     }
   ]
   return (
-    <ul className='personal'>
+    <ul className='ul'>
       <li>姓名：WuChangxin</li>
       <li>学历专业：本科 计算机科学与技术</li>
       <li>
@@ -38,6 +42,9 @@ const personal = () => {
          <Divider type='vertical' /> */}
         <MailOutlined/>
         <a href='mailto:1132425275@qq.com'>1132425275@qq.com</a>
+        &nbsp;&nbsp;
+        <WechatOutlined />
+        <a href="phone:15896285705">15896285705</a>
       </li>
       <li>坐标：苏州市</li>
       <li>

@@ -1,5 +1,5 @@
 import routes from '@/routes'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { HashRouter, Route, Switch } from 'react-router-dom'
 
 const App = props => {
   function renderRoutes (routes, contextPath) {
@@ -32,9 +32,9 @@ const App = props => {
 
   const Routers = renderRoutes(routes, '/')
   return (
-    <BrowserRouter>
+    <HashRouter>
       {Routers}
-    </BrowserRouter>
+    </HashRouter>
   )
 }
 

@@ -10,7 +10,7 @@ export const login = params => {
                     type: TYPES.USER_LOGIN,
                     payload: res.data
                 })
-                message.success(`登录成功, 欢迎您 ${res.data.username}`)
+                message.success(`登录成功, 欢迎您 ${res.data.user.username}`)
                 return res
             }
         })

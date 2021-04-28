@@ -1,5 +1,5 @@
 .article-item {
-  border: 1px solid @borderColor;
+  border: 1px solid darken(@borderColor, 3%);
   margin-bottom: @unit*4;
   border-radius: @borderRadius;
   overflow: hidden;
@@ -25,6 +25,8 @@
   .article-content {
     height: 200px;
     overflow: hidden;
+    background: #f9f9f9;
+    padding: @unit*2;
   }
 
   .article-other {
@@ -64,7 +66,6 @@
       display: none;
     }
     .article-content{
-      background: #f9f9f9;
       padding: @unit;
     }
     .article-other{

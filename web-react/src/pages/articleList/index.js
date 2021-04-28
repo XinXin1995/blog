@@ -17,7 +17,7 @@ export const groupBy = (arr, f) => {
         groups[key] = groups[key] || []
         groups[key].push(item)
     })
-    return Object.values(groups)
+    return Object.keys(groups).sort((a, b) => b - a).map(v => groups[v])
 }
 
 const formatDate = (dateStr) => {

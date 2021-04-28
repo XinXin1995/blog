@@ -11,7 +11,7 @@ const List = () => {
   const location = useLocation()
   const { list, loading, pagination } = useFetchList({
     requestMethod: GetArticles,
-    queryParams: { pageSize: 5, category: 0, orderType: 2, withContent: true },
+    queryParams: { pageSize: 5, category: 0, orderType: 3, withContent: true },
     fetchDependence: [location.pathname, location.search]
   })
   return (

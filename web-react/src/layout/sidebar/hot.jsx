@@ -9,7 +9,7 @@ function Hot () {
   const history = useHistory()
   const [list, setList] = useState([])
   useMount(() => {
-    GetArticles({ pageSize: 5, pageNo: 1, orderType: 3 }).then(res => {
+    GetArticles({ pageSize: 5, pageNo: 1, orderType: 2 }).then(res => {
       if (res.code === 0) {
         let list = res.data.list || []
         setList(list)
@@ -21,7 +21,7 @@ function Hot () {
   }
   return (
     <div className={'hot'}>
-      <Divider orientation={'left'}>置顶</Divider>
+      <Divider orientation={'left'}>TOP</Divider>
 
       <ul>
         {list.map((v, i) => <li key={i} onClick={() => handleDirect(v)}>{v.title}</li>)}

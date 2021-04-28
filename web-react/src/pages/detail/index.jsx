@@ -65,9 +65,17 @@ const Detail = () => {
                             <Divider type={'vertical'}/>
                             <PartitionOutlined className={'icon'}/>
                             <Tag onClick={e => handleSearchByCategory(e, item.category.id)} color={'blue'}>{item.category && item.category.name}</Tag>
-                            <Divider type={'vertical'}/>
-                            <TagsOutlined className={'icon'}/>
-                            {item.tags && item.tags.map(it => (
+
+
+                            {item.tags && item.tags.length > 0 && (
+                                  <>
+                                  <Divider type={'vertical'}/>
+
+                                  <TagsOutlined className={'icon'}/>
+                                  </>
+                              )
+                            }
+                            {item.tags && item.tags.length > 0 && item.tags.map(it => (
                                 <Tag onClick={e => handleSearchByTag(e, it.id)} key={it.id} color={it.color}>{it.name}</Tag>
                             ))}
                         </div>

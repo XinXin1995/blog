@@ -5,8 +5,8 @@ import SearchBox from '@/layout/searchBox'
 import Sidebar from './sidebar'
 import logoSrc from '@/assets/img/logo.svg'
 import './layout.less'
-import { getScrollTop} from '@/utils'
-import PublicComponent from "@/components/public";
+import { getScrollTop } from '@/utils'
+import PublicComponent from '@/components/public'
 
 
 const Layout = props => {
@@ -23,7 +23,10 @@ const Layout = props => {
       setSideBarFix(scrollTop >= 104)
       flag = false
     })
-    document.getElementById('sidebar').style.width = col.current.clientWidth + 'px'
+    const sidebar = document.getElementById('sidebar')
+    if (sidebar) {
+      sidebar.style.width = col.current.clientWidth + 'px'
+    }
   }, [setSideBarFix])
 
   return (
@@ -32,7 +35,7 @@ const Layout = props => {
         <Row>
           <Col xs={20} sm={20} md={6} lg={6} xl={5} xxl={4}>
             <h1>
-              <a id="logo" href="/" >
+              <a id="logo" href="/">
                 <img src={logoSrc} alt="logo"/>
                 JACBO WOO
               </a>
@@ -56,8 +59,8 @@ const Layout = props => {
           </Col>
         </Row>
       </main>
-      <PublicComponent />
-      <BackTop />
+      <PublicComponent/>
+      <BackTop/>
     </>
   )
 }

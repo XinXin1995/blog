@@ -65,7 +65,7 @@ export default function useFetchList(
                 pagination.orderType = parseInt(requestParams.orderType)
                 pagination.total = data.total
                 setPagination({...pagination})
-                setDataList(data.list)
+                setDataList(data.list || [])
             }
             withLoading && setLoading(false)
         }).catch(e => withLoading && setLoading(false))
