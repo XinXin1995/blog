@@ -9,7 +9,7 @@ function Hot () {
   const history = useHistory()
   const [list, setList] = useState([])
   useMount(() => {
-    GetArticles({ pageSize: 5, pageNo: 1, orderType: 2 }).then(res => {
+    GetArticles({ pageSize: 5, pageNo: 1, orderType: 1 }).then(res => {
       if (res.code === 0) {
         let list = res.data.list || []
         setList(list)

@@ -1,12 +1,14 @@
 import React from 'react'
 import { Anchor } from 'antd'
+
 const { Link } = Anchor
 
 // 根据 article 来生成锚点列表
-function getAnchorList(str) {
+function getAnchorList (str) {
   const pattern = /<(h[1-6])[\s\S]+?(?=<\/\1>)/g
   const list = []
-  function pushItem(arr, item) {
+
+  function pushItem (arr, item) {
     const len = arr.length
     const matchItem = arr[len - 1]
     if (matchItem && matchItem.tag !== item.tag) {
@@ -16,6 +18,7 @@ function getAnchorList(str) {
       // debugger
     }
   }
+
   str.replace(pattern, ($0, $1) => {
     const title = $0.replace(/.*?>/, '')
     const startIndex = $0.indexOf('"')
@@ -33,16 +36,27 @@ function getAnchorList(str) {
   return list
 }
 
+const handleDirect = (e, link) => {
+  e.preventDefault()
+  let anchorElement = document.getElementById(link)
+  // 如果对应id的锚点存在，就跳转到锚点
+  if (anchorElement) {
+    anchorElement.scrollIntoView()
+  }
+}
+
 const Navigation = ({ content }) => {
   const list = getAnchorList(content)
-  function renderLink({ href, title, children }) {
+
+  function renderLink ({ href, title, children }) {
     return (
       <Link key={href} href={href} title={title}>
         {children.length > 0 && children.map(sub => renderLink(sub))}
       </Link>
     )
   }
-  return <Anchor showInkInFixed affix={false}>{list.map(renderLink)}</Anchor>
+
+  return <Anchor onClick={handleDirect} showInkInFixed affix={false}>{list.map(renderLink)}</Anchor>
 }
 
 export default Navigation
